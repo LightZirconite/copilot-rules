@@ -123,12 +123,6 @@ install_instructions() {
       return 0
     }
 
-    if [ -f "$vscode_settings" ]; then
-      echo "Backing up your current configuration..."
-      cp "$vscode_settings" "$vscode_settings.backup"
-      echo "Backup created: $vscode_settings.backup"
-    fi
-
     mkdir -p "$(dirname "$vscode_settings")"
     cp "$temp_settings" "$vscode_settings"
     rm -f "$temp_settings"
@@ -144,7 +138,28 @@ install_instructions() {
   fi
 
   echo ""
-  echo "Reload VS Code: Ctrl+Shift+P -> Developer: Reload Window"
+  echo "========================================="
+  echo ""
+  read -p "Do you want to restart VS Code now? (y/n): " -n 1 -r
+  echo ""
+
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo ""
+    echo "Closing VS Code..."
+    pkill -x Code 2>/dev/null || pkill -x code 2>/dev/null
+    sleep 2
+    echo "Starting VS Code..."
+    if command -v code >/dev/null 2>&1; then
+      code &
+      echo "VS Code restarted successfully!"
+    else
+      echo "Unable to restart VS Code automatically. Please start it manually."
+    fi
+  else
+    echo ""
+    echo "Please reload VS Code manually: Ctrl+Shift+P -> Developer: Reload Window"
+  fi
+
   echo ""
 }
 

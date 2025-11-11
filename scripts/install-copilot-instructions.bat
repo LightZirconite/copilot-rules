@@ -66,11 +66,6 @@ if errorlevel 1 (
   echo   "github.copilot.chat.codeGeneration.useInstructionFiles": true
   goto :skipConfig
 )
-if exist "%VSCODE_SETTINGS%" (
-  echo Backing up your current configuration...
-  copy /Y "%VSCODE_SETTINGS%" "%VSCODE_SETTINGS%.backup" >nul
-  echo Backup created: %VSCODE_SETTINGS%.backup
-)
 copy /Y "%TEMP_SETTINGS%" "%VSCODE_SETTINGS%" >nul
 del /F /Q "%TEMP_SETTINGS%" >nul 2>&1
 echo VS Code configuration updated successfully!
@@ -87,7 +82,27 @@ echo.
 
 :end
 echo.
-echo Reload VS Code: Ctrl+Shift+P -^> Developer: Reload Window
+echo =========================================
+echo.
+choice /C YN /M "Do you want to restart VS Code now"
+if errorlevel 2 goto :skipRestart
+if errorlevel 1 goto :restartVSCode
+
+:restartVSCode
+echo.
+echo Closing VS Code...
+taskkill /F /IM Code.exe >nul 2>&1
+timeout /t 2 /nobreak >nul
+echo Starting VS Code...
+start "" "%LOCALAPPDATA%\Programs\Microsoft VS Code\Code.exe"
+echo VS Code restarted successfully!
+goto :endRestart
+
+:skipRestart
+echo.
+echo Please reload VS Code manually: Ctrl+Shift+P -^> Developer: Reload Window
+
+:endRestart
 echo.
 pause
 exit /b 0
