@@ -1,159 +1,120 @@
-# 🚀 Copilot Rules - Community-Driven GitHub Copilot Instructions
+# Copilot Rules
 
-**The most comprehensive, community-maintained collection of GitHub Copilot instructions for Visual Studio Code.**
+Community-maintained GitHub Copilot instructions for Visual Studio Code. A comprehensive collection of rules designed to improve code generation accuracy, prevent common errors, and enforce best practices.
 
-This project aims to create the **best possible set of instructions** to maximize GitHub Copilot's accuracy, fix common errors, prevent hallucinations, and maintain context across long coding sessions.
+## Purpose
 
-## 🎯 Mission
+GitHub Copilot is powerful but can hallucinate non-existent APIs, lose context in long sessions, and generate inconsistent code. This project provides a battle-tested set of instructions that:
 
-Build the **largest and most effective instruction set** that:
-- ✅ Corrects maximum Copilot errors and edge cases
-- ✅ Prevents AI hallucinations (inventing non-existent APIs, functions, or methods)
-- ✅ Maintains context across long conversations
-- ✅ Provides clear, actionable coding guidelines
-- ✅ Works across multiple languages and frameworks
-- ✅ Enforces best practices for security, performance, and code quality
+- Prevent AI hallucinations (inventing functions, methods, or APIs that don't exist)
+- Maintain context across long coding sessions
+- Enforce consistent code patterns and architecture
+- Catch potential bugs before they're written
+- Improve code quality and security
 
-## 📦 What's Inside
+## What's Included
 
-### `.vscode/settings.json`
-Complete VSCode configuration with **100+ GitHub Copilot instructions** covering:
+**`instructions/global.instructions.md`** - Copilot instruction file (Markdown + frontmatter) ready to copy into user or workspace profiles.
 
-- **Workflow & Behavior**: How Copilot should analyze, plan, and execute code changes
-- **Anti-Hallucination Measures**: Critical rules to prevent inventing non-existent code
-- **Context Management**: Prevent context degradation in long sessions
-- **Code Quality**: Consistency, dead code detection, error handling patterns
-- **Architecture & Patterns**: DRY principle, maintainable code structure
-- **Performance & Security**: Best practices for production-ready code
-- **Language-Specific Rules**: TypeScript, JavaScript, Python, C#/.NET optimizations
+**`.vscode/settings.json`** - Configures VS Code to consume instruction files and applies default Copilot/editor safeguards.
 
-### Key Features
+**`scripts/install-copilot-instructions.bat`** & **`scripts/install-copilot-instructions.sh`** - Automation scripts that install the instruction file into the global VS Code profile on Windows, macOS, and Linux.
 
-#### 🛡️ Anti-Hallucination (Critical)
-```
-- NEVER invent functions, methods, or APIs that don't exist
-- ALWAYS verify method signatures and types exist in the codebase
-- Flag uncertain suggestions with 'VERIFY:' prefix
-```
+## Installation
 
-#### 🧠 Context Preservation
-```
-- Auto-reset after 12-15 exchanges to prevent degradation
-- Re-scan files every 8-10 interactions
-- Self-monitoring for contradicting decisions or forgotten patterns
-```
+### Option 1: Workspace Settings (Recommended)
 
-#### 🔍 Code Quality Enforcement
-```
-- Scan for dead code, unused imports, unreachable code
-- Check function consistency across the codebase
-- Detect potential bugs: null checks, async patterns, race conditions
-```
+Copy the settings file **and** the instruction file into your project:
 
-#### ⚡ Smart Workflow
-```
-- Analyze ENTIRE codebase before making changes
-- Provide action plan before execution
-- Ask for clarification on ambiguous requests
-- Remove ALL debug code before presenting final version
-```
-
-## 🚀 Quick Start
-
-### 1. Copy Settings to Your Project
-
-**Option A: Workspace Settings (Recommended)**
 ```bash
-# Copy the settings file to your project
-mkdir .vscode
+mkdir -p .vscode instructions
 cp .vscode/settings.json /path/to/your/project/.vscode/settings.json
+cp instructions/global.instructions.md /path/to/your/project/instructions/global.instructions.md
 ```
 
-**Option B: Global User Settings**
-1. Open VSCode Settings (Ctrl+, or Cmd+,)
-2. Click the "Open Settings (JSON)" icon in the top right
-3. Copy the content from `.vscode/settings.json` and merge with your existing settings
+```powershell
+# Windows PowerShell / CMD
+echo F|xcopy .vscode\settings.json C:\path\to\project\.vscode\ /Y
+echo F|xcopy instructions\global.instructions.md C:\path\to\project\instructions\ /Y /I
+```
 
-### 2. Reload VSCode
-Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac) → `Developer: Reload Window`
+### Option 2: Global User Settings
 
-### 3. Start Using Copilot
-GitHub Copilot will now follow all the instructions automatically. You'll notice:
-- More accurate code suggestions
-- Better context understanding in long conversations
-- Fewer hallucinated APIs or functions
-- Cleaner, production-ready code
+1. Open VSCode Settings (`Ctrl+,` or `Cmd+,`)
+2. Click "Open Settings (JSON)" icon (top right)
+3. Merge content from `.vscode/settings.json` with your existing settings
 
-## 🤝 Contributing
+### Option 3: Global Copilot Instructions (User Profile)
 
-**This project THRIVES on community contributions!**
+Run the helper script that matches your platform to copy `instructions/global.instructions.md` into the VS Code profile `prompts` folder. Supply an alternate URL or output filename if you need a different branch or custom naming.
 
-Every time you:
-- Find a Copilot error pattern
-- Discover an instruction that improves code quality
-- Have an idea to prevent hallucinations
-- Want to add language-specific rules
+```powershell
+# Windows (PowerShell or Command Prompt)
+scripts\install-copilot-instructions.bat
 
-**→ Please share it!** Submit a Pull Request to help everyone benefit.
+# Override the download URL or output file name (optional)
+scripts\install-copilot-instructions.bat "https://raw.githubusercontent.com/LightZirconite/copilot-rules/main/instructions/global.instructions.md" my-team.instructions.md
+```
 
-### How to Contribute
+```bash
+# macOS / Linux
+bash scripts/install-copilot-instructions.sh
 
-1. **Fork this repository** on GitHub
-2. **Add or improve instructions** in `.vscode/settings.json`
-3. **Test your changes** - verify they actually improve Copilot's behavior
-4. **Submit a Pull Request** explaining what problem your changes solve
+# Override the download URL or output file name (optional)
+bash scripts/install-copilot-instructions.sh "https://raw.githubusercontent.com/LightZirconite/copilot-rules/main/instructions/global.instructions.md" my-team.instructions.md
+```
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+The scripts detect the correct profile directory automatically:
+
+- Windows: `%APPDATA%\Code\User\prompts` (or `Code - Insiders`)
+- macOS: `~/Library/Application Support/Code/User/prompts`
+- Linux: `${XDG_CONFIG_HOME:-$HOME/.config}/Code/User/prompts`
+
+### Usage
+
+Reload VSCode: `Ctrl+Shift+P` → `Developer: Reload Window`
+
+Copilot will now follow all instructions automatically.
+
+## Contributing
+
+Found a Copilot error pattern or instruction that improves code quality? Share it.
+
+1. Fork this repository
+2. Edit `instructions/global.instructions.md` (and `.vscode/settings.json` if tooling defaults need changes)
+3. Test your changes
+4. Submit a Pull Request
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ### What to Contribute
 
-- **New instructions** that fix specific Copilot behaviors
-- **Improvements** to existing rules for better clarity
-- **Language-specific guidelines** (Python, TypeScript, C#, Go, Rust, etc.)
-- **Framework patterns** (React, Next.js, Express, FastAPI, etc.)
-- **Real-world examples** of problems solved by specific instructions
+- Instructions that fix specific Copilot behaviors
+- Language-specific rules (Python, TypeScript, C#, Go, Rust)
+- Framework patterns (React, Next.js, Express, FastAPI)
+- Real-world examples of prevented bugs
 
-## 📊 Project Stats
-
-- **100+ instructions** covering all aspects of code generation
-- **8 major categories**: Workflow, Anti-Hallucination, Context, Quality, Architecture, Performance, Security, Documentation
-- **Supports**: TypeScript, JavaScript, Python, C#/.NET, and more
-- **Community-maintained**: Every contribution makes Copilot better for everyone
-
-## 🌟 Why Use This?
+## Examples
 
 ### Before
 ```typescript
-// Copilot might suggest non-existent methods
-user.getFullName(); // ❌ This method doesn't exist
+// Copilot invents non-existent method
+user.getFullName(); // Method doesn't exist
 ```
 
-### After (with these instructions)
+### After
 ```typescript
-// Copilot checks first, then suggests correctly
-// VERIFY: User class doesn't have getFullName(). 
-// Did you mean: user.firstName + ' ' + user.lastName?
-const fullName = `${user.firstName} ${user.lastName}`; // ✅ Correct
+// Copilot verifies first
+// VERIFY: User class doesn't have getFullName()
+const fullName = `${user.firstName} ${user.lastName}`;
 ```
 
-## 📖 Learn More
+## License
 
-- [GitHub Copilot Documentation](https://docs.github.com/en/copilot)
-- [VSCode Settings Reference](https://code.visualstudio.com/docs/getstarted/settings)
-- [Issues & Discussions](https://github.com/LightZirconite/copilot-rules/issues)
+MIT License - See [LICENSE](LICENSE)
 
-## 📝 License
+## Links
 
-MIT License - See [LICENSE](LICENSE) for details.
-
-## 💬 Questions or Ideas?
-
-- Open an [Issue](https://github.com/LightZirconite/copilot-rules/issues)
-- Start a [Discussion](https://github.com/LightZirconite/copilot-rules/discussions)
-- Submit a [Pull Request](https://github.com/LightZirconite/copilot-rules/pulls)
-
----
-
-**Together, let's build the most powerful GitHub Copilot instruction set possible!** 🚀
-
-Every contribution, no matter how small, helps the entire community write better code.
+- [Issues](https://github.com/LightZirconite/copilot-rules/issues)
+- [Discussions](https://github.com/LightZirconite/copilot-rules/discussions)
+- [Pull Requests](https://github.com/LightZirconite/copilot-rules/pulls)
