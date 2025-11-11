@@ -33,7 +33,18 @@ if not exist "%TARGET_DIR%" (
 
 set "DEST_FILE=%TARGET_DIR%\%TARGET_NAME%"
 
+if exist "%DEST_FILE%" (
+  echo Updating existing instructions at "%DEST_FILE%"...
+  del /F /Q "%DEST_FILE%" >nul 2>&1
+) else (
+  echo Installing instructions to "%DEST_FILE%"...
+)
+
+set "SOURCE_KIND=remote"
+
 if exist "%SOURCE%" (
+  set "SOURCE_KIND=local"
+  echo Copying instructions from "%SOURCE%"...
   copy /Y "%SOURCE%" "%DEST_FILE%" >nul
   if errorlevel 1 call :fail "Failed to copy instructions from %SOURCE%."
 ) else (
@@ -42,7 +53,7 @@ if exist "%SOURCE%" (
 )
 
 echo.
-echo SUCCESS: Copilot instructions installed to "%DEST_FILE%".
+echo SUCCESS: Copilot instructions installed to "%DEST_FILE%" (source: %SOURCE_KIND%).
 echo.
 if "%PAUSE_ON_ERROR%"=="1" pause
 exit /b 0
@@ -98,7 +109,10 @@ exit /b 1
 
 :detectPauseMode
 set "CMD_LINE=%CMDCMDLINE%"
-if not defined CMD_LINE exit /b 0
+if not defined CMD_LINE (
+  set "PAUSE_ON_ERROR=1"
+  exit /b 0
+)
 set "WITH_C_LOW=%CMD_LINE:/c=%"
 if not "%WITH_C_LOW%"=="%CMD_LINE%" set "PAUSE_ON_ERROR=1"
 set "WITH_C_UP=%CMD_LINE:/C=%"
