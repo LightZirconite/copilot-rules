@@ -42,16 +42,39 @@ resolve_target_dir() {
 }
 
 install_instructions() {
-  mkdir -p "$TARGET_DIR"
+  mkdir -p "$TARGET_DIR" || {
+    echo "Failed to create directory $TARGET_DIR" >&2
+    exit 1
+  }
+  
   local dest="$TARGET_DIR/$TARGET_NAME"
 
   if [ -f "$SOURCE" ]; then
-    cp "$SOURCE" "$dest"
+    cp "$SOURCE" "$dest" || {
+      echo "Failed to copy instructions from $SOURCE" >&2
+      exit 1
+    }
   else
     if command -v curl >/dev/null 2>&1; then
-      curl -fsSL "$SOURCE" -o "$dest"
+      echo "Downloading from $SOURCE using curl..."
+      curl -fsSL "$SOURCE" -o "$dest" || {
+        echo "curl failed to download $SOURCE" >&2
+        echo "Trying wget..."
+        if command -v wget >/dev/null 2>&1; then
+          wget -qO "$dest" "$SOURCE" || {
+            echo "wget also failed to download $SOURCE" >&2
+            exit 1
+          }
+        else
+          exit 1
+        fi
+      }
     elif command -v wget >/dev/null 2>&1; then
-      wget -qO "$dest" "$SOURCE"
+      echo "Downloading from $SOURCE using wget..."
+      wget -qO "$dest" "$SOURCE" || {
+        echo "wget failed to download $SOURCE" >&2
+        exit 1
+      }
     else
       echo "Neither curl nor wget is available to download $SOURCE." >&2
       exit 1

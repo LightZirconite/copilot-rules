@@ -34,7 +34,10 @@ if exist "%SOURCE%" (
   if errorlevel 1 call :fail "Failed to download instructions from %SOURCE%."
 )
 
-echo Copilot instructions installed to "%DEST_FILE%".
+echo.
+echo SUCCESS: Copilot instructions installed to "%DEST_FILE%".
+echo.
+if "%PAUSE_ON_ERROR%"=="1" pause
 exit /b 0
 
 :detectTarget
@@ -57,14 +60,15 @@ exit /b 0
 :download
 set "URL=%~1"
 set "DEST=%~2"
+echo Downloading from %URL%...
 where curl >nul 2>&1
 if not errorlevel 1 (
   curl -fsSL "%URL%" -o "%DEST%"
   if not errorlevel 1 exit /b 0
-  echo curl failed to download "%URL%". Falling back to PowerShell.
+  echo curl failed to download "%URL%". Falling back to PowerShell...
   goto :tryPowerShell
 ) else (
-  echo curl command not found. Falling back to PowerShell.
+  echo curl not found. Falling back to PowerShell...
   goto :tryPowerShell
 )
 
@@ -74,8 +78,15 @@ if errorlevel 1 call :fail "Failed to download %URL%."
 exit /b 0
 
 :fail
-echo %~1
-if "%PAUSE_ON_ERROR%"=="1" pause
+echo.
+echo ERROR: %~1
+echo.
+if "%PAUSE_ON_ERROR%"=="1" (
+  pause
+) else (
+  echo Press any key to close...
+  pause >nul
+)
 exit /b 1
 
 :detectPauseMode
