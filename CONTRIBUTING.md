@@ -2,7 +2,7 @@
 
 
 
-**Thank you for helping build the best GitHub Copilot instruction set!****Thank you for helping build the best GitHub Copilot instruction set!**
+**Thank you for helping build the best GitHub Copilot instruction set!** Thank you for helping build the best GitHub Copilot instruction set!**
 
 
 
