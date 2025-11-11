@@ -2,7 +2,13 @@
 set -euo pipefail
 
 DEFAULT_URL="https://raw.githubusercontent.com/LightZirconite/copilot-rules/main/instructions/global.instructions.md"
-SOURCE="${1:-$DEFAULT_URL}"
+
+if [ -n "${1:-}" ]; then
+  SOURCE="$1"
+else
+  SOURCE="$DEFAULT_URL"
+fi
+
 TARGET_NAME="${2:-global.instructions.md}"
 
 resolve_target_dir() {
@@ -20,7 +26,7 @@ resolve_target_dir() {
       candidates+=("$config_home/Code - Insiders/User/prompts")
       ;;
     MINGW*|MSYS*|CYGWIN*)
-      echo "Use install-copilot-instructions.bat on Windows environments." >&2
+      echo "Utilisez install-copilot-instructions.bat sur Windows." >&2
       exit 1
       ;;
     *)
@@ -43,45 +49,45 @@ resolve_target_dir() {
 
 install_instructions() {
   mkdir -p "$TARGET_DIR" || {
-    echo "Failed to create directory $TARGET_DIR" >&2
+    echo "Echec de la creation du repertoire $TARGET_DIR" >&2
     exit 1
   }
   
   local dest="$TARGET_DIR/$TARGET_NAME"
 
-  if [ -f "$SOURCE" ]; then
-    cp "$SOURCE" "$dest" || {
-      echo "Failed to copy instructions from $SOURCE" >&2
+  if [ -f "$dest" ]; then
+    echo "[1/3] Suppression de l'ancienne version..."
+    rm -f "$dest"
+  fi
+
+  echo "[2/3] Telechargement depuis GitHub..."
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL "$SOURCE" -o "$dest" || {
+      echo "curl a echoue. Tentative avec wget..." >&2
+      if command -v wget >/dev/null 2>&1; then
+        wget -qO "$dest" "$SOURCE" || {
+          echo "wget a egalement echoue." >&2
+          exit 1
+        }
+      else
+        exit 1
+      fi
+    }
+  elif command -v wget >/dev/null 2>&1; then
+    wget -qO "$dest" "$SOURCE" || {
+      echo "wget a echoue." >&2
       exit 1
     }
   else
-    if command -v curl >/dev/null 2>&1; then
-      echo "Downloading from $SOURCE using curl..."
-      curl -fsSL "$SOURCE" -o "$dest" || {
-        echo "curl failed to download $SOURCE" >&2
-        echo "Trying wget..."
-        if command -v wget >/dev/null 2>&1; then
-          wget -qO "$dest" "$SOURCE" || {
-            echo "wget also failed to download $SOURCE" >&2
-            exit 1
-          }
-        else
-          exit 1
-        fi
-      }
-    elif command -v wget >/dev/null 2>&1; then
-      echo "Downloading from $SOURCE using wget..."
-      wget -qO "$dest" "$SOURCE" || {
-        echo "wget failed to download $SOURCE" >&2
-        exit 1
-      }
-    else
-      echo "Neither curl nor wget is available to download $SOURCE." >&2
-      exit 1
-    fi
+    echo "Ni curl ni wget ne sont disponibles." >&2
+    exit 1
   fi
 
-  echo "Copilot instructions installed to $dest"
+  echo "[3/3] Installation terminee: $dest"
+  echo ""
+  echo "========================================="
+  echo "  SUCCES: Instructions Copilot installees"
+  echo "========================================="
 }
 
 resolve_target_dir

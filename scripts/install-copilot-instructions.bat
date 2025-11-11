@@ -5,15 +5,9 @@ set "PAUSE_ON_ERROR=0"
 call :detectPauseMode
 
 set "DEFAULT_URL=https://raw.githubusercontent.com/LightZirconite/copilot-rules/main/instructions/global.instructions.md"
-for %%I in ("%~dp0..") do set "REPO_ROOT=%%~fI"
-set "DEFAULT_FILE=%REPO_ROOT%\instructions\global.instructions.md"
 
 if "%~1"=="" (
-  if exist "%DEFAULT_FILE%" (
-    set "SOURCE=%DEFAULT_FILE%"
-  ) else (
-    set "SOURCE=%DEFAULT_URL%"
-  )
+  set "SOURCE=%DEFAULT_URL%"
 ) else (
   set "SOURCE=%~1"
 )
@@ -33,17 +27,15 @@ if not exist "%TARGET_DIR%" (
 
 set "DEST_FILE=%TARGET_DIR%\%TARGET_NAME%"
 
-if exist "%SOURCE%" (
-  echo [1/2] Source locale detectee: %SOURCE%
-  copy /Y "%SOURCE%" "%DEST_FILE%" >nul
-  if errorlevel 1 call :fail "Impossible de copier le fichier local."
-  echo [2/2] Fichier installe avec succes: %DEST_FILE%
-) else (
-  echo [1/2] Telechargement depuis: %SOURCE%
-  call :download "%SOURCE%" "%DEST_FILE%"
-  if errorlevel 1 call :fail "Echec du telechargement."
-  echo [2/2] Fichier telecharge et installe: %DEST_FILE%
+if exist "%DEST_FILE%" (
+  echo [1/3] Suppression de l'ancienne version...
+  del /F /Q "%DEST_FILE%" >nul 2>&1
 )
+
+echo [2/3] Telechargement depuis GitHub...
+call :download "%SOURCE%" "%DEST_FILE%"
+if errorlevel 1 call :fail "Echec du telechargement."
+echo [3/3] Installation terminee: %DEST_FILE%
 
 echo.
 echo =========================================
@@ -103,17 +95,6 @@ if "%PAUSE_ON_ERROR%"=="1" (
 exit /b 1
 
 :detectPauseMode
-set "CMD_LINE=%CMDCMDLINE%"
-if not defined CMD_LINE (
-  set "PAUSE_ON_ERROR=1"
-  exit /b 0
-)
-set "WITH_C_LOW=%CMD_LINE:/c=%"
-if not "%WITH_C_LOW%"=="%CMD_LINE%" set "PAUSE_ON_ERROR=1"
-set "WITH_C_UP=%CMD_LINE:/C=%"
-if not "%WITH_C_UP%"=="%CMD_LINE%" set "PAUSE_ON_ERROR=1"
-set "WITH_K_LOW=%CMD_LINE:/k=%"
-if not "%WITH_K_LOW%"=="%CMD_LINE%" set "PAUSE_ON_ERROR=0"
-set "WITH_K_UP=%CMD_LINE:/K=%"
-if not "%WITH_K_UP%"=="%CMD_LINE%" set "PAUSE_ON_ERROR=0"
+REM Force pause unconditionally for clarity
+set "PAUSE_ON_ERROR=1"
 exit /b 0
