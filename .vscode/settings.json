@@ -1,69 +1,31 @@
 {
-  // --- Copilot Chat / Agent ---
+  // --- Copilot Agent & Reasoning Core ---
   "github.copilot.chat.codeGeneration.useInstructionFiles": true,
   "chat.instructionsFilesLocations": {
     "${workspaceFolder}/instructions": true
   },
-  "github.copilot.chat.codesearch.enabled": true,
-  "github.copilot.chat.agent.thinkingTool": true,
-  // Enable context for common languages
-  "github.copilot.chat.languageContext.typescript.enabled": true,
-  "github.copilot.chat.languageContext.javascript.enabled": true,
-  "github.copilot.chat.languageContext.python.enabled": true,
-  "github.copilot.chat.languageContext.fix.typescript.enabled": true,
-  "github.copilot.chat.languageContext.inline.typescript.enabled": true,
-  // Agent limits & context
-  "chat.agent.maxRequests": 30,
-  "github.copilot.chat.useProjectTemplates": true,
-  "github.copilot.chat.newWorkspace.useContext7": true,
-  // Temporal context
-  "github.copilot.chat.editor.temporalContext.enabled": true,
-  "github.copilot.chat.edits.temporalContext.enabled": true,
-  // --- Editor / Workspace ---
+  "github.copilot.chat.agent.thinkingTool": true, // ENABLES DEEP REASONING
+  "github.copilot.chat.editor.temporalContext.enabled": true, // AI understands "what changed recently"
+  // --- Context Hygiene (Critical for Accuracy) ---
+  // We hide heavy files so the AI context window isn't wasted on trash
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.next": true,
+    "**/coverage": true,
+    "**/package-lock.json": true,
+    "**/yarn.lock": true,
+    "**/*.min.js": true
+  },
+  // --- Automated Quality Control ---
+  // Fix imports and linting automatically so the AI focuses on Logic, not formatting
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit"
   },
   "editor.formatOnSave": true,
-  "editor.inlineSuggest.enabled": true,
-  "editor.suggestSelection": "first",
-  "editor.quickSuggestions": {
-    "strings": true,
-    "comments": false,
-    "other": true
-  },
-  // TypeScript/JavaScript
-  "typescript.preferences.importModuleSpecifier": "relative",
-  "typescript.updateImportsOnFileMove.enabled": "always",
-  "javascript.updateImportsOnFileMove.enabled": "always",
-  "typescript.suggest.autoImports": true,
-  "javascript.suggest.autoImports": true,
-  // UI
-  "breadcrumbs.enabled": true,
-  "editor.minimap.enabled": false,
-  "explorer.confirmDelete": true,
-  "explorer.confirmDragAndDrop": true,
-  "security.workspace.trust.untrustedFiles": "prompt",
-  "files.hotExit": "onExitAndWindowClose",
-  // Git
-  "git.autofetch": true,
-  "git.enableSmartCommit": false,
-  "git.confirmSync": true,
-  // Workspace
-  "workbench.startupEditor": "none",
-  "workbench.colorTheme": "Copilot Theme",
-  // Testing
-  "python.testing.autoTestDiscoverOnSaveEnabled": false,
-  "github.copilot.chat.setupTests.enabled": false,
-  "github.copilot.chat.edits.suggestRelatedFilesForTests": false,
-  // Tools
-  "chat.tools.autoApprove": false,
-  "chat.tools.terminal.autoApprove": {},
-  // Extensions
-  "byepop.enabled": true,
-  "vscode-edge-devtools.webhintInstallNotification": true,
-  // Chat MCP
-  "chat.mcp.autostart": "newAndOutdated",
+  // --- Prediction & Suggestions ---
   "github.copilot.nextEditSuggestions.enabled": true,
-  "github.copilot.chat.customOAIModels": {}
+  "editor.inlineSuggest.enabled": true
 }
