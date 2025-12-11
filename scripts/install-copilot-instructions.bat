@@ -5,6 +5,7 @@ set "PAUSE_ON_ERROR=0"
 call :detectPauseMode
 
 set "DEFAULT_URL=https://raw.githubusercontent.com/LightZirconite/copilot-rules/refs/heads/main/instructions/global.instructions.md"
+set "GPT_FAST_URL=https://raw.githubusercontent.com/LightZirconite/copilot-rules/refs/heads/main/agents/gpt-fast.instructions.md"
 
 if "%~1"=="" (
   set "SOURCE=%DEFAULT_URL%"
@@ -26,6 +27,7 @@ if not exist "%TARGET_DIR%" (
 )
 
 set "DEST_FILE=%TARGET_DIR%\%TARGET_NAME%"
+set "GPT_FAST_DEST=%TARGET_DIR%\gpt-fast.instructions.md"
 
 if exist "%DEST_FILE%" (
   echo [1/4] Removing previous version...
@@ -35,6 +37,11 @@ if exist "%DEST_FILE%" (
 echo [2/4] Downloading from GitHub...
 call :download "%SOURCE%" "%DEST_FILE%"
 if errorlevel 1 call :fail "Download failed."
+
+echo [2.5/4] Downloading GPT-FAST Agent...
+call :download "%GPT_FAST_URL%" "%GPT_FAST_DEST%"
+if errorlevel 1 echo WARNING: Failed to download GPT-FAST agent.
+
 echo [3/4] Installation complete: %DEST_FILE%
 
 echo.

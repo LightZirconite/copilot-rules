@@ -1,56 +1,30 @@
 # Copilot Rules
 
-Instructions GitHub Copilot pour améliorer la génération de code, éviter les erreurs et renforcer la qualité du code.
+Instructions for GitHub Copilot to improve code quality, avoid errors, and enforce best practices.
 
-## Pourquoi ce projet ?
+## Quick Install ⚡
 
-GitHub Copilot peut parfois :
-- Inventer des APIs qui n'existent pas
-- Perdre le contexte dans les longues conversations
-- Générer du code incohérent
+Simply copy and paste the command for your system into your terminal.
 
-Ce projet fournit des instructions qui corrigent ces problèmes et améliorent la qualité du code généré.
-
-## Installation (2 secondes ⚡)
-
-### Windows
-Double-cliquez sur `scripts\install-copilot-instructions.bat`
-
-**OU** depuis PowerShell / CMD :
+### Windows (PowerShell)
 ```powershell
-scripts\install-copilot-instructions.bat
+irm https://raw.githubusercontent.com/LightZirconite/copilot-rules/main/scripts/install-copilot-instructions.bat -OutFile i.bat; .\i.bat; rm i.bat
 ```
 
 ### macOS / Linux
 ```bash
-bash scripts/install-copilot-instructions.sh
+curl -fsSL https://raw.githubusercontent.com/LightZirconite/copilot-rules/main/scripts/install-copilot-instructions.sh | bash
 ```
 
-**C'est tout !** Les scripts téléchargent et installent automatiquement les instructions dans votre profil VS Code.
+## That's it!
 
-### Activation
+1. **Reload VS Code** (`Ctrl+Shift+P` → `Developer: Reload Window`).
+2. Copilot will now automatically follow the instructions.
 
-Rechargez VS Code : `Ctrl+Shift+P` → `Developer: Reload Window`
+---
 
-Copilot suivra maintenant automatiquement toutes les instructions.
+### Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Contribuer
-
-Vous avez trouvé une amélioration pour Copilot ? Partagez-la !
-
-1. Fork ce dépôt
-2. Modifiez `instructions/global.instructions.md`
-3. Testez vos changements
-4. Soumettez une Pull Request
-
-Voir [CONTRIBUTING.md](CONTRIBUTING.md) pour plus de détails.
-
-## License
-
-MIT License - See [LICENSE](LICENSE)
-
-## Links
-
-- [Issues](https://github.com/LightZirconite/copilot-rules/issues)
-- [Discussions](https://github.com/LightZirconite/copilot-rules/discussions)
-- [Pull Requests](https://github.com/LightZirconite/copilot-rules/pulls)
+### License
+MIT - [LICENSE](LICENSE)
