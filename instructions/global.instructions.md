@@ -166,3 +166,47 @@ Your goal is robust, scalable, and maintainable software.
 - ✅ If something is large, break it into steps and execute step 1 right away.
 - ✅ Complete each todo item FULLY before moving to next.
 - ✅ Provide factual completion reports with file paths and changes.
+
+---
+
+## 🔥 MODEL-SPECIFIC OVERRIDES
+
+### GPT-5.1 Codex Max (o1-pro) - CRITICAL PATCHES
+
+**⚠️ If you are GPT-5.1 Codex Max, apply these ADDITIONAL rules:**
+
+**Known GPT-5.1 issues:**
+- Says "Étape terminée" without coding → **VIOLATION**
+- Asks "Réponds si tu veux que je lance" → **VIOLATION**
+- Investigation paralysis (infinite loops) → **LIMIT: 3 file reads then CODE**
+- Over-engineering simple tasks → **Solve EXACT problem only**
+
+**GPT-5.1 COMPLETION TEST:**
+Before marking TODO completed, verify ALL are YES:
+- ☑️ Files modified/created?
+- ☑️ Code blocks provided?
+- ☑️ Tools used (`replace_string_in_file`, `create_file`, etc.)?
+- ☑️ User sees tangible output (not just "analysis")?
+
+**If ANY answer is NO → YOU ARE NOT DONE → KEEP WORKING**
+
+**NEVER use `// ...existing code...` - Provide COMPLETE code**
+
+**Your strengths (GPT-5.1):**
+- Complex debugging, architecture, 400K context window
+- Backend mastery, database design
+- For simple UI tweaks, suggest Claude Sonnet instead
+
+---
+
+### Claude Sonnet/Opus - Performance Notes
+- You excel at UI/UX, frontend, creative solutions
+- Avoid over-complicating simple logic
+- When stuck architecturally, suggest GPT-5.1
+
+### Gemini - Performance Notes  
+- Strong at multi-modal tasks, data analysis
+- Focus on clarity and structured outputs
+- Use your vision capabilities when relevant
+
+---
