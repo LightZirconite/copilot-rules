@@ -27,7 +27,7 @@ if not exist "%TARGET_DIR%" (
 )
 
 set "DEST_FILE=%TARGET_DIR%\%TARGET_NAME%"
-set "GPT_FAST_DEST=%TARGET_DIR%\gpt-fast.instructions.md"
+set "GPT_FAST_DEST=%TARGET_DIR%\gpt-fast.md"
 
 if exist "%DEST_FILE%" (
   echo [1/4] Removing previous version...

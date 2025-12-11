@@ -20,6 +20,7 @@ curl -fsSL https://raw.githubusercontent.com/LightZirconite/copilot-rules/main/s
 
 1. **Reload VS Code** (`Ctrl+Shift+P` → `Developer: Reload Window`).
 2. Copilot will now automatically follow the instructions.
+3. **New:** Select **GPT-FAST** from the Copilot Agent menu for high-velocity coding.
 
 ---
 

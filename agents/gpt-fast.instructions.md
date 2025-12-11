@@ -1,4 +1,5 @@
 ---
+name: GPT-FAST
 description: "GPT-FAST: High-Velocity Action Agent (Codex Max)"
 ---
 
