@@ -5,7 +5,7 @@ set "PAUSE_ON_ERROR=0"
 call :detectPauseMode
 
 set "DEFAULT_URL=https://raw.githubusercontent.com/LightZirconite/copilot-rules/refs/heads/main/instructions/global.instructions.md"
-set "GPT_FAST_URL=https://raw.githubusercontent.com/LightZirconite/copilot-rules/refs/heads/main/agents/gpt-fast.instructions.md"
+set "GPT_FAST_URL=https://raw.githubusercontent.com/LightZirconite/copilot-rules/refs/heads/main/agents/gpt-fast.agent.md"
 
 if "%~1"=="" (
   set "SOURCE=%DEFAULT_URL%"
@@ -27,7 +27,7 @@ if not exist "%TARGET_DIR%" (
 )
 
 set "DEST_FILE=%TARGET_DIR%\%TARGET_NAME%"
-set "GPT_FAST_DEST=%TARGET_DIR%\gpt-fast.md"
+set "GPT_FAST_DEST=%TARGET_DIR%\gpt-fast.agent.md"
 
 if exist "%DEST_FILE%" (
   echo [1/4] Removing previous version...

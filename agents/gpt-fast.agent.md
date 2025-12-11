@@ -1,6 +1,6 @@
 ---
 name: GPT-FAST
-description: "GPT-FAST: High-Velocity Action Agent (Codex Max)"
+description: "High-Velocity Action Agent (Codex Max)"
 ---
 
 # GPT-FAST Protocol (Codex Max)

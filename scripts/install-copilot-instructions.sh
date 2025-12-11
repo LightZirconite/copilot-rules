@@ -7,7 +7,7 @@ echo "========================================="
 
 # --- Configuration ---
 INSTRUCT_URL="https://raw.githubusercontent.com/LightZirconite/copilot-rules/refs/heads/main/instructions/global.instructions.md"
-GPT_FAST_URL="https://raw.githubusercontent.com/LightZirconite/copilot-rules/refs/heads/main/agents/gpt-fast.instructions.md"
+GPT_FAST_URL="https://raw.githubusercontent.com/LightZirconite/copilot-rules/refs/heads/main/agents/gpt-fast.agent.md"
 SETTINGS_URL="https://raw.githubusercontent.com/LightZirconite/copilot-rules/refs/heads/main/.vscode/settings.json"
 TARGET_NAME="global.instructions.md"
 
@@ -48,7 +48,7 @@ echo "[1/3] Downloading Instructions..."
 mkdir -p "$PROMPTS_DIR"
 download_file "$INSTRUCT_URL" "$PROMPTS_DIR/$TARGET_NAME"
 echo "Downloading GPT-FAST Agent..."
-download_file "$GPT_FAST_URL" "$PROMPTS_DIR/gpt-fast.md"
+download_file "$GPT_FAST_URL" "$PROMPTS_DIR/gpt-fast.agent.md"
 
 # --- Step 2: Force Update Settings ---
 echo "[2/3] Overwriting VS Code Settings..."
