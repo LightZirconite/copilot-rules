@@ -2,13 +2,12 @@
 set -e
 
 echo "========================================="
-echo "  AUTO-INSTALLER: Copilot God Mode"
+echo "  Copilot Rules Installer"
 echo "========================================="
 
 # --- Configuration ---
-INSTRUCT_URL="https://raw.githubusercontent.com/LightZirconite/copilot-rules/refs/heads/main/instructions/global.instructions.md"
-GPT_FAST_URL="https://raw.githubusercontent.com/LightZirconite/copilot-rules/refs/heads/main/agents/gpt-fast.agent.md"
-SETTINGS_URL="https://raw.githubusercontent.com/LightZirconite/copilot-rules/refs/heads/main/.vscode/settings.json"
+INSTRUCT_URL="https://raw.githubusercontent.com/LightZirconite/copilot-rules/main/instructions/global.instructions.md"
+SETTINGS_URL="https://raw.githubusercontent.com/LightZirconite/copilot-rules/main/.vscode/settings.json"
 TARGET_NAME="global.instructions.md"
 
 # --- Detect OS & Directories ---
@@ -44,36 +43,41 @@ download_file() {
 }
 
 # --- Step 1: Install Instructions ---
-echo "[1/3] Downloading Instructions..."
+echo "[1/2] Downloading Instructions..."
 mkdir -p "$PROMPTS_DIR"
 download_file "$INSTRUCT_URL" "$PROMPTS_DIR/$TARGET_NAME"
-echo "Downloading GPT-FAST Agent..."
-download_file "$GPT_FAST_URL" "$PROMPTS_DIR/gpt-fast.agent.md"
+echo "Instructions installed to: $PROMPTS_DIR/$TARGET_NAME"
 
-# --- Step 2: Force Update Settings ---
-echo "[2/3] Overwriting VS Code Settings..."
+# --- Step 2: Update Settings ---
+echo "[2/2] Updating VS Code Settings..."
 TEMP_SETTINGS="/tmp/copilot-settings.json"
 download_file "$SETTINGS_URL" "$TEMP_SETTINGS"
 
-# Ensure directory exists
 mkdir -p "$(dirname "$SETTINGS_FILE")"
 cp "$TEMP_SETTINGS" "$SETTINGS_FILE"
 rm -f "$TEMP_SETTINGS"
 
-# --- Step 3: Auto-Restart VS Code ---
-echo "[3/3] Restarting VS Code..."
+echo ""
+echo "========================================="
+echo "  SUCCESS: Installation complete!"
+echo "========================================="
+echo ""
+echo "Please restart VS Code to apply changes."
+echo ""
 
-# Kill existing processes
-pkill -x Code || true
-pkill -x code || true
-
-sleep 1
-
-# Start VS Code
-if command -v code >/dev/null 2>&1; then
-  code & disown
-elif [ "$uname_out" = "Darwin" ]; then
-  open -a "Visual Studio Code"
+# --- Optional: Restart VS Code ---
+read -p "Restart VS Code now? (y/n) " -n 1 -r
+echo ""
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+  pkill -x Code 2>/dev/null || true
+  pkill -x code 2>/dev/null || true
+  sleep 1
+  if command -v code >/dev/null 2>&1; then
+    code & disown
+  elif [ "$uname_out" = "Darwin" ]; then
+    open -a "Visual Studio Code"
+  fi
+  echo "VS Code restarted."
 fi
 
 echo "Done."

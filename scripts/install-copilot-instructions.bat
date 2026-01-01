@@ -4,8 +4,7 @@ setlocal enabledelayedexpansion
 set "PAUSE_ON_ERROR=0"
 call :detectPauseMode
 
-set "DEFAULT_URL=https://raw.githubusercontent.com/LightZirconite/copilot-rules/refs/heads/main/instructions/global.instructions.md"
-set "GPT_FAST_URL=https://raw.githubusercontent.com/LightZirconite/copilot-rules/refs/heads/main/agents/gpt-fast.agent.md"
+set "DEFAULT_URL=https://raw.githubusercontent.com/LightZirconite/copilot-rules/main/instructions/global.instructions.md"
 
 if "%~1"=="" (
   set "SOURCE=%DEFAULT_URL%"
@@ -27,22 +26,17 @@ if not exist "%TARGET_DIR%" (
 )
 
 set "DEST_FILE=%TARGET_DIR%\%TARGET_NAME%"
-set "GPT_FAST_DEST=%TARGET_DIR%\gpt-fast.agent.md"
 
 if exist "%DEST_FILE%" (
-  echo [1/4] Removing previous version...
+  echo [1/3] Removing previous version...
   del /F /Q "%DEST_FILE%" >nul 2>&1
 )
 
-echo [2/4] Downloading from GitHub...
+echo [2/3] Downloading from GitHub...
 call :download "%SOURCE%" "%DEST_FILE%"
 if errorlevel 1 call :fail "Download failed."
 
-echo [2.5/4] Downloading GPT-FAST Agent...
-call :download "%GPT_FAST_URL%" "%GPT_FAST_DEST%"
-if errorlevel 1 echo WARNING: Failed to download GPT-FAST agent.
-
-echo [3/4] Installation complete: %DEST_FILE%
+echo [3/3] Installation complete: %DEST_FILE%
 
 echo.
 echo =========================================
@@ -52,8 +46,6 @@ echo.
 
 REM VS Code configuration
 set "VSCODE_SETTINGS=%APPDATA%\Code\User\settings.json"
-echo [4/4] VS Code configuration...
-echo.
 echo For Copilot to use these instructions, your settings.json must contain:
 echo   "github.copilot.chat.codeGeneration.useInstructionFiles": true
 echo.
@@ -64,7 +56,7 @@ if errorlevel 1 goto :updateConfig
 :updateConfig
 echo.
 echo Downloading recommended configuration...
-set "SETTINGS_URL=https://raw.githubusercontent.com/LightZirconite/copilot-rules/refs/heads/main/.vscode/settings.json"
+set "SETTINGS_URL=https://raw.githubusercontent.com/LightZirconite/copilot-rules/main/.vscode/settings.json"
 set "TEMP_SETTINGS=%TEMP%\copilot-rules-settings.json"
 call :download "%SETTINGS_URL%" "%TEMP_SETTINGS%"
 if errorlevel 1 (
@@ -98,78 +90,45 @@ if errorlevel 1 goto :restartVSCode
 :restartVSCode
 echo.
 echo Closing VS Code...
-taskkill /F /IM Code.exe >nul 2>&1
-timeout /t 2 /nobreak >nul
+taskkill /IM Code.exe /F >nul 2>&1
+timeout /t 2 >nul
 echo Starting VS Code...
-start "" /B "%LOCALAPPDATA%\Programs\Microsoft VS Code\Code.exe" >nul 2>&1
-if not exist "%LOCALAPPDATA%\Programs\Microsoft VS Code\Code.exe" (
-  where code >nul 2>&1
-  if not errorlevel 1 (
-    start "" /B code >nul 2>&1
-  )
-)
-echo VS Code restarted successfully!
+start "" code
 echo.
-pause
-exit /b 0
+goto :done
 
 :skipRestart
 echo.
-echo Please reload VS Code manually: Ctrl+Shift+P -^> Developer: Reload Window
+echo Please restart VS Code manually to apply changes.
 echo.
-pause
+
+:done
+if "%PAUSE_ON_ERROR%"=="1" pause
+exit /b 0
+
+:detectPauseMode
+for %%I in (%CMDCMDLINE%) do (
+  if /I "%%~I"=="/c" set "PAUSE_ON_ERROR=1"
+)
 exit /b 0
 
 :detectTarget
-set "TARGET="
-set "APPDATA_DIR=%APPDATA%"
-if defined APPDATA_DIR (
-  if exist "%APPDATA_DIR%\Code\User" set "TARGET=%APPDATA_DIR%\Code\User\prompts"
-  if not defined TARGET if exist "%APPDATA_DIR%\Code - Insiders\User" set "TARGET=%APPDATA_DIR%\Code - Insiders\User\prompts"
-)
-if not defined TARGET (
-  if defined APPDATA_DIR (
-    set "TARGET=%APPDATA_DIR%\Code\User\prompts"
-  ) else (
-    call :fail "APPDATA environment variable not found."
-  )
-)
-set "%~1=%TARGET%"
+REM Determine correct prompts directory
+set "%~1=%APPDATA%\Code\User\prompts"
 exit /b 0
 
 :download
-set "URL=%~1"
-set "DEST=%~2"
-echo Downloading from %URL%...
-where curl >nul 2>&1
-if not errorlevel 1 (
-  curl -fsSL "%URL%" -o "%DEST%"
-  if not errorlevel 1 exit /b 0
-  echo curl failed to download "%URL%". Falling back to PowerShell...
-  goto :tryPowerShell
-) else (
-  echo curl not found. Falling back to PowerShell...
-  goto :tryPowerShell
+REM Download a file using PowerShell
+powershell -NoProfile -Command "Invoke-WebRequest -Uri '%~1' -OutFile '%~2' -UseBasicParsing" 2>nul
+if errorlevel 1 (
+  powershell -NoProfile -Command "[Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12; (New-Object Net.WebClient).DownloadFile('%~1','%~2')" 2>nul
 )
-
-:tryPowerShell
-powershell -NoProfile -Command "try { Invoke-WebRequest -Uri '%URL%' -OutFile '%DEST%' -UseBasicParsing } catch { exit 1 }"
-if errorlevel 1 call :fail "Failed to download %URL%."
+if not exist "%~2" exit /b 1
 exit /b 0
 
 :fail
 echo.
 echo ERROR: %~1
 echo.
-if "%PAUSE_ON_ERROR%"=="1" (
-  pause
-) else (
-  echo Press any key to close...
-  pause >nul
-)
+if "%PAUSE_ON_ERROR%"=="1" pause
 exit /b 1
-
-:detectPauseMode
-REM Force pause unconditionally for clarity
-set "PAUSE_ON_ERROR=1"
-exit /b 0
